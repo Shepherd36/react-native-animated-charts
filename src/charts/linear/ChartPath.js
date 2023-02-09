@@ -754,22 +754,22 @@ export function SvgComponent() {
              props.gradientEnabled &&
              <Defs>
                <LinearGradient id="prefix__paint0_linear" x1="100%" y1="0%" x2="100%" y2="100%" >
-                  <Stop stopColor="#45AEF5" stopOpacity="0.35" />
-                  <Stop offset="0.0666667" stopColor="#45AEF5" stopOpacity="0.33"/>
-                  <Stop offset="0.133333" stopColor="#45AEF5" stopOpacity="0.31"/>
-                  <Stop offset="0.2" stopColor="#45AEF5" stopOpacity="0.29"/>
-                  <Stop offset="0.266667" stopColor="#45AEF5" stopOpacity="0.26"/>
-                  <Stop offset="0.333333" stopColor="#45AEF5" stopOpacity="0.22"/>
-                  <Stop offset="0.4" stopColor="#45AEF5" stopOpacity="0.19"/>
-                  <Stop offset="0.466667" stopColor="#45AEF5" stopOpacity="0.17"/>
-                  <Stop offset="0.533333" stopColor="#45AEF5" stopOpacity="0.15"/>
-                  <Stop offset="0.6" stopColor="#45AEF5" stopOpacity="0.13"/>
-                  <Stop offset="0.666667" stopColor="#45AEF5" stopOpacity="0.11"/>
-                  <Stop offset="0.733333" stopColor="#45AEF5" stopOpacity="0.08"/>
-                  <Stop offset="0.8" stopColor="#45AEF5" stopOpacity="0.06"/>
-                  <Stop offset="0.866667" stopColor="#45AEF5" stopOpacity="0.03551"/>
-                  <Stop offset="0.933333" stopColor="#45AEF5" stopOpacity="0.01"/>
-                  <Stop offset="1" stopColor="#45AEF5" stopOpacity="0"/>
+                  <Stop stopColor={props.stroke} stopOpacity="0.35" />
+                  <Stop offset="0.0666667" stopColor={props.stroke} stopOpacity="0.33"/>
+                  <Stop offset="0.133333" stopColor={props.stroke} stopOpacity="0.31"/>
+                  <Stop offset="0.2" stopColor={props.stroke} stopOpacity="0.29"/>
+                  <Stop offset="0.266667" stopColor={props.stroke} stopOpacity="0.26"/>
+                  <Stop offset="0.333333" stopColor={props.stroke} stopOpacity="0.22"/>
+                  <Stop offset="0.4" stopColor={props.stroke} stopOpacity="0.19"/>
+                  <Stop offset="0.466667" stopColor={props.stroke} stopOpacity="0.17"/>
+                  <Stop offset="0.533333" stopColor={props.stroke} stopOpacity="0.15"/>
+                  <Stop offset="0.6" stopColor={props.stroke} stopOpacity="0.13"/>
+                  <Stop offset="0.666667" stopColor={props.stroke} stopOpacity="0.11"/>
+                  <Stop offset="0.733333" stopColor={props.stroke} stopOpacity="0.08"/>
+                  <Stop offset="0.8" stopColor={props.stroke} stopOpacity="0.06"/>
+                  <Stop offset="0.866667" stopColor={props.stroke} stopOpacity="0.03551"/>
+                  <Stop offset="0.933333" stopColor={props.stroke} stopOpacity="0.01"/>
+                  <Stop offset="1" stopColor={props.stroke} stopOpacity="0"/>
                </LinearGradient>
              </Defs>
            }
