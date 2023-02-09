@@ -17,7 +17,13 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { Path, Svg } from 'react-native-svg';
+import {
+  Path,
+  Svg,
+  Defs,
+  Stop,
+  LinearGradient
+} from 'react-native-svg';
 
 import ChartContext, {
   useGenerateValues as generateValues,
@@ -681,10 +687,21 @@ function ChartPath({
     };
   }, undefined);
 
+  const gradientAnimatedProps = useAnimatedStyle(() => {
+    const pathValue = path.value.replace('M', 'L');
+    const gradientD = pathValue.length > 0 ? `M 0,${height} C 0,0 0,0 0,0 ${pathValue} L ${width},${height}` : '';
+    const props = {
+      d: gradientD,
+
+    };
+    return props;
+  }, []);
+
   return (
     <InternalContext.Provider
       value={{
         animatedProps,
+        gradientAnimatedProps,
         animatedStyle,
         gestureEnabled,
         height,
@@ -707,11 +724,13 @@ export function SvgComponent() {
     height,
     width,
     animatedProps,
+    gradientAnimatedProps,
     props,
     onLongPressGestureEvent,
     gestureEnabled,
     longPressGestureHandlerProps,
   } = useContext(InternalContext);
+
   return (
     <LongPressGestureHandler
       enabled={gestureEnabled}
@@ -727,6 +746,33 @@ export function SvgComponent() {
           viewBox={`0 0 ${width} ${height}`}
           width={width}
         >
+          <AnimatedPath
+             animatedProps={gradientAnimatedProps}
+             fill="url(#prefix__paint0_linear)"
+           />
+           {
+             props.gradientEnabled &&
+             <Defs>
+               <LinearGradient id="prefix__paint0_linear" x1="100%" y1="0%" x2="100%" y2="100%" >
+                  <Stop stopColor="#45AEF5" stopOpacity="0.35" />
+                  <Stop offset="0.0666667" stopColor="#45AEF5" stopOpacity="0.33"/>
+                  <Stop offset="0.133333" stopColor="#45AEF5" stopOpacity="0.31"/>
+                  <Stop offset="0.2" stopColor="#45AEF5" stopOpacity="0.29"/>
+                  <Stop offset="0.266667" stopColor="#45AEF5" stopOpacity="0.26"/>
+                  <Stop offset="0.333333" stopColor="#45AEF5" stopOpacity="0.22"/>
+                  <Stop offset="0.4" stopColor="#45AEF5" stopOpacity="0.19"/>
+                  <Stop offset="0.466667" stopColor="#45AEF5" stopOpacity="0.17"/>
+                  <Stop offset="0.533333" stopColor="#45AEF5" stopOpacity="0.15"/>
+                  <Stop offset="0.6" stopColor="#45AEF5" stopOpacity="0.13"/>
+                  <Stop offset="0.666667" stopColor="#45AEF5" stopOpacity="0.11"/>
+                  <Stop offset="0.733333" stopColor="#45AEF5" stopOpacity="0.08"/>
+                  <Stop offset="0.8" stopColor="#45AEF5" stopOpacity="0.06"/>
+                  <Stop offset="0.866667" stopColor="#45AEF5" stopOpacity="0.03551"/>
+                  <Stop offset="0.933333" stopColor="#45AEF5" stopOpacity="0.01"/>
+                  <Stop offset="1" stopColor="#45AEF5" stopOpacity="0"/>
+               </LinearGradient>
+             </Defs>
+           }
           <AnimatedPath
             animatedProps={animatedProps}
             {...props}
