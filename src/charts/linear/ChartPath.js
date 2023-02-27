@@ -355,9 +355,9 @@ export default function ChartPathProvider({
       state.value = event.state;
       originalX.value = '';
       originalY.value = '';
-      dotScale.value = withSpring(
+      dotScale.value = withTiming(
         0,
-        combineConfigs(springDefaultConfig, springConfig)
+        combineConfigs(timingFeedbackDefaultConfig, timingFeedbackConfig)
       );
       if (android) {
         pathOpacity.value = 1;
@@ -373,9 +373,9 @@ export default function ChartPathProvider({
       state.value = event.state;
       originalX.value = '';
       originalY.value = '';
-      dotScale.value = withSpring(
+      dotScale.value = withTiming(
         0,
-        combineConfigs(springDefaultConfig, springConfig)
+        combineConfigs(timingFeedbackDefaultConfig, timingFeedbackConfig)
       );
       if (android) {
         pathOpacity.value = 1;
@@ -395,9 +395,9 @@ export default function ChartPathProvider({
       state.value = event.state;
       originalX.value = '';
       originalY.value = '';
-      dotScale.value = withSpring(
+      dotScale.value = withTiming(
         0,
-        combineConfigs(springDefaultConfig, springConfig)
+        combineConfigs(timingFeedbackDefaultConfig, timingFeedbackConfig)
       );
       if (android) {
         pathOpacity.value = 1;
