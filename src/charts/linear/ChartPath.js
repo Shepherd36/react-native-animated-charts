@@ -12,6 +12,7 @@ import Animated, {
   runOnJS,
   useAnimatedGestureHandler,
   useAnimatedStyle,
+  useAnimatedReaction,
   useDerivedValue,
   useSharedValue,
   withSpring,
@@ -36,6 +37,13 @@ function impactHeavy() {
   (runOnJS
     ? runOnJS(ReactNativeHapticFeedback.trigger)
     : ReactNativeHapticFeedback.trigger)('impactHeavy');
+}
+
+function selection() {
+  'worklet';
+  (runOnJS
+    ? runOnJS(ReactNativeHapticFeedback.trigger)
+    : ReactNativeHapticFeedback.trigger)('selection');
 }
 
 export const InternalContext = createContext(null);
@@ -270,6 +278,14 @@ export default function ChartPathProvider({
   }, [data]);
 
   const isStarted = useSharedValue(false, 'isStarted');
+
+  useAnimatedReaction(() => {
+    return originalX.value;
+  }, (current, prev) => {
+    if (current !== prev) {
+      hapticsEnabledValue.value && selection();
+    }
+  }, []);
 
   const onLongPressGestureEvent = useAnimatedGestureHandler({
     onActive: event => {
