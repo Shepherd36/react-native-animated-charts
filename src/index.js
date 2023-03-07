@@ -13,3 +13,4 @@ export { default as useChartData } from './helpers/useChartData';
 export { default as simplifyData } from './simplification/simplifyData';
 export { default as monotoneCubicInterpolation } from './interpolations/monotoneCubicInterpolation';
 export { default as bSplineInterpolation } from './interpolations/bSplineInterpolation';
+export { default as stepInterpolation } from './interpolations/stepInterpolation';
