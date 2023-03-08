@@ -102,9 +102,19 @@ const parse = (data, yRange) => {
   ];
 };
 
-function setoriginalXYAccordingToPosition(
+function setoriginalXYAccordingToNearestPoint(
   originalX,
   originalY,
+  nearestPoint,
+) {
+  'worklet';
+  originalX.value = nearestPoint.originalX.toString();
+  originalY.value = nearestPoint.originalY
+    ? nearestPoint.originalY.toString()
+    : 'undefined';
+}
+
+function findNearestPoint(
   position,
   data
 ) {
@@ -112,7 +122,11 @@ function setoriginalXYAccordingToPosition(
   let idx = 0;
   for (let i = 0; i < data.value.length; i++) {
     if (data.value[i].x >= position) {
-      idx = i;
+      if (data.value[i - 1] && (data.value[i - 1].x - data.value[i].x) / 2 < position - data.value[i].x) {
+        idx = i;
+      } else {
+        idx = i - 1;
+      }
       break;
     }
     if (i === data.value.length - 1) {
@@ -127,10 +141,8 @@ function setoriginalXYAccordingToPosition(
     console.warn('No data available for chart', data.value.length, idx);
     return;
   }
-  originalX.value = data.value[idx].originalX.toString();
-  originalY.value = data.value[idx].originalY
-    ? data.value[idx].originalY.toString()
-    : 'undefined';
+  // hack for step-charts
+  return data.value[idx + 1] && data.value[idx + 1].x === data.value[idx].x ? data.value[idx + 1] : data.value[idx];
 }
 
 function positionXWithMargin(x, margin, width) {
@@ -327,6 +339,8 @@ export default function ChartPathProvider({
         }
       }
 
+      const nearestPoint = findNearestPoint(eventX / layoutSize.value.width, curroriginalData);
+
       if (
         ss.value === 'bezier' &&
         currData.value.length > 30 &&
@@ -342,29 +356,20 @@ export default function ChartPathProvider({
         positionY.value =
           (prevLastY + progress * (lastY - prevLastY)) *
           layoutSize.value.height;
+        console.log(positionY.value);
       } else if (idx === 0) {
         positionY.value =
           getValue(currData, idx, ss).y * layoutSize.value.height;
       } else {
-        // prev + diff over X
-        positionY.value =
-          (getValue(currData, idx - 1, ss).y +
-            (getValue(currData, idx, ss).y -
-              getValue(currData, idx - 1, ss).y) *
-              ((eventX / layoutSize.value.width -
-                getValue(currData, idx - 1, ss).x) /
-                (getValue(currData, idx, ss).x -
-                  getValue(currData, idx - 1, ss).x))) *
-          layoutSize.value.height;
+        positionY.value = nearestPoint.y * layoutSize.value.height;
       }
 
-      setoriginalXYAccordingToPosition(
+      setoriginalXYAccordingToNearestPoint(
         originalX,
         originalY,
-        eventX / layoutSize.value.width,
-        curroriginalData
+        nearestPoint,
       );
-      positionX.value = eventX;
+      positionX.value = nearestPoint.x * layoutSize.value.width;
     },
     onCancel: event => {
       isStarted.value = false;
