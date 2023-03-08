@@ -12,6 +12,7 @@ import Animated, {
   runOnJS,
   useAnimatedGestureHandler,
   useAnimatedStyle,
+  useAnimatedProps,
   useAnimatedReaction,
   useDerivedValue,
   useSharedValue,
@@ -22,6 +23,7 @@ import {
   Path,
   Svg,
   Defs,
+  Rect,
   Stop,
   LinearGradient
 } from 'react-native-svg';
@@ -178,6 +180,37 @@ function getValue(data, i, smoothingStrategy) {
     return { x: cp3x, y: cp3y };
   }
   return data.value[i];
+}
+
+function calculateRectY(x, d, ss, layoutSize) {
+  'worklet'
+  let idx = 0;
+  if (!d?.value?.length) {
+    return {
+      y: 0,
+    }
+  }
+  for (let i = 0; i < d.value.length; i++) {
+    if (getValue(d, i, ss).x > x / layoutSize.value.width) {
+      idx = i;
+      break;
+    }
+    if (i === d.value.length - 1) {
+      idx = d.value.length - 1;
+    }
+  }
+  const y = (getValue(d, idx - 1, ss).y +
+          (getValue(d, idx, ss).y -
+            getValue(d, idx - 1, ss).y) *
+            ((x / layoutSize.value.width -
+              getValue(d, idx - 1, ss).x) /
+              (getValue(d, idx, ss).x -
+                getValue(d, idx - 1, ss).x))) *
+                  layoutSize.value.height;
+  const props = {
+    y,
+  };
+  return props;
 }
 
 export default function ChartPathProvider({
@@ -358,7 +391,6 @@ export default function ChartPathProvider({
         positionY.value =
           (prevLastY + progress * (lastY - prevLastY)) *
           layoutSize.value.height;
-        console.log(positionY.value);
       } else if (idx === 0) {
         positionY.value =
           getValue(currData, idx, ss).y * layoutSize.value.height;
@@ -471,6 +503,7 @@ export default function ChartPathProvider({
 }
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
+const AnimatedRect = Animated.createAnimatedComponent(Rect);
 
 function ChartPath({
   smoothingWhileTransitioningEnabled,
@@ -639,11 +672,36 @@ function ChartPath({
     return props;
   }, []);
 
+  const rect1AnimatedProps = useAnimatedProps(() => {
+    return calculateRectY(width * 0.0948, currData, smoothingStrategy, layoutSize);
+  }, [currData]);
+
+  const rect2AnimatedProps = useAnimatedProps(() => {
+    return calculateRectY(width * 0.2974, currData, smoothingStrategy, layoutSize);
+  }, [currData]);
+
+  const rect3AnimatedProps = useAnimatedProps(() => {
+    return calculateRectY(width * 0.5, currData, smoothingStrategy, layoutSize);
+  }, [currData]);
+
+  const rect4AnimatedProps = useAnimatedProps(() => {
+    return calculateRectY(width * 0.7025, currData, smoothingStrategy, layoutSize);
+  }, [currData]);
+
+  const rect5AnimatedProps = useAnimatedProps(() => {
+    return calculateRectY(width * 0.9051, currData, smoothingStrategy, layoutSize);
+  }, [currData]);
+
   return (
     <InternalContext.Provider
       value={{
         animatedProps,
         gradientAnimatedProps,
+        rect1AnimatedProps,
+        rect2AnimatedProps,
+        rect3AnimatedProps,
+        rect4AnimatedProps,
+        rect5AnimatedProps,
         animatedStyle,
         gestureEnabled,
         height,
@@ -667,6 +725,11 @@ export function SvgComponent() {
     width,
     animatedProps,
     gradientAnimatedProps,
+    rect1AnimatedProps,
+    rect2AnimatedProps,
+    rect3AnimatedProps,
+    rect4AnimatedProps,
+    rect5AnimatedProps,
     props,
     onLongPressGestureEvent,
     gestureEnabled,
@@ -688,10 +751,15 @@ export function SvgComponent() {
           viewBox={`0 0 ${width} ${height}`}
           width={width}
         >
+          <AnimatedRect animatedProps={rect1AnimatedProps} opacity="0.08" height="100%" x="9.48%" width="1" rx="0.5" fill="url(#prefix__paint0_linear)"/>
+          <AnimatedRect animatedProps={rect2AnimatedProps} opacity="0.08" x="29.74%" width="1" height="100%" rx="0.5" fill="url(#prefix__paint0_linear)"/>
+          <AnimatedRect animatedProps={rect3AnimatedProps} opacity="0.08" x="50%" width="1" height="100%" rx="0.5" fill="url(#prefix__paint0_linear)"/>
+          <AnimatedRect animatedProps={rect4AnimatedProps} opacity="0.08" x="70.25%" width="1" height="100%" rx="0.5" fill="url(#prefix__paint0_linear)"/>
+          <AnimatedRect animatedProps={rect5AnimatedProps} opacity="0.08" x="90.51%" width="1" height="100%" rx="0.5" fill="url(#prefix__paint0_linear)"/>
           <AnimatedPath
              animatedProps={gradientAnimatedProps}
              fill="url(#prefix__paint0_linear)"
-           />
+          />
            {
              props.gradientEnabled &&
              <Defs>
@@ -715,6 +783,7 @@ export function SvgComponent() {
                </LinearGradient>
              </Defs>
            }
+
           <AnimatedPath
             animatedProps={animatedProps}
             {...props}
