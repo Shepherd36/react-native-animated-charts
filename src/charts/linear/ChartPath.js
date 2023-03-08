@@ -125,7 +125,7 @@ function findNearestPoint(
       if (data.value[i - 1] && (data.value[i - 1].x - data.value[i].x) / 2 < position - data.value[i].x) {
         idx = i;
       } else {
-        idx = i - 1;
+        idx = Math.max(0, i - 1);
       }
       break;
     }
@@ -231,10 +231,12 @@ export default function ChartPathProvider({
   const [data, setData] = useState(providedData);
   const dataQueue = useSharedValue(valuesStore.current.dataQueue, 'dataQueue');
   useEffect(() => {
+    // hack for correct latest point position
+    const fixedData = providedData?.points?.length ? { points: [...providedData.points, providedData.points[providedData.points.length - 1], providedData.points[providedData.points.length - 1]] } : providedData;
     if (isAnimationInProgress.value) {
-      dataQueue.value.push(providedData);
+      dataQueue.value.push(fixedData);
     } else {
-      setData(providedData);
+      setData(fixedData);
     }
   }, [providedData]);
 
