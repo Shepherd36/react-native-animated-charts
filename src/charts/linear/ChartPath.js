@@ -208,7 +208,7 @@ function calculateRectY(x, d, ss, layoutSize) {
                 getValue(d, idx - 1, ss).x))) *
                   layoutSize.value.height;
   const props = {
-    y,
+    y: withTiming(y, timingAnimationDefaultConfig),
   };
   return props;
 }
