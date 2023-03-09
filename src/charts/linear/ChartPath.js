@@ -275,7 +275,7 @@ export default function ChartPathProvider({
     // hack for correct latest point position
     const fixedData = providedData?.points?.length ? { points: [...providedData.points, providedData.points[providedData.points.length - 1], providedData.points[providedData.points.length - 1]] } : providedData;
     if (isAnimationInProgress.value) {
-      dataQueue.value.push(fixedData);
+      dataQueue.value[0] = fixedData;
     } else {
       setData(fixedData);
     }
