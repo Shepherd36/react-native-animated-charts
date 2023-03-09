@@ -14,6 +14,8 @@ export function useGenerateValues() {
   const state = useSharedValue(0, 'state');
   const positionX = useSharedValue(0, 'positionX');
   const positionY = useSharedValue(0, 'positionY');
+  const rect1XLabel = useSharedValue(0, 'rect1XLabel');
+  const rect3XLabel = useSharedValue(0, 'rect3XLabel');
 
   return {
     currSmoothing,
@@ -21,6 +23,8 @@ export function useGenerateValues() {
     layoutSize,
     originalX,
     originalY,
+    rect1XLabel,
+    rect3XLabel,
     pathOpacity,
     positionX,
     positionY,
@@ -29,3 +33,4 @@ export function useGenerateValues() {
     state,
   };
 }
+
