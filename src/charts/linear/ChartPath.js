@@ -214,7 +214,7 @@ function calculateRectYAndUpdateProperty(x, d, ss, layoutSize, xLabelProperty) {
                 getValue(d, idx - 1, ss).x))) *
                   layoutSize.value.height;
   const props = {
-    y: withTiming(y, timingAnimationDefaultConfig),
+    y,
   };
   return props;
 }
@@ -267,18 +267,12 @@ export default function ChartPathProvider({
   const hitSlopValue = useSharedValue(hitSlop);
   const hapticsEnabledValue = useSharedValue(hapticsEnabled);
   const [extremes, setExtremes] = useState({});
-  const isAnimationInProgress = useSharedValue(false, 'isAnimationInProgress');
 
   const [data, setData] = useState(providedData);
-  const dataQueue = useSharedValue(valuesStore.current.dataQueue, 'dataQueue');
   useEffect(() => {
     // hack for correct latest point position
     const fixedData = providedData?.points?.length ? { points: [...providedData.points, providedData.points[providedData.points.length - 1], providedData.points[providedData.points.length - 1]] } : providedData;
-    if (isAnimationInProgress.value) {
-      dataQueue.value[0] = fixedData;
-    } else {
-      setData(fixedData);
-    }
+    setData(fixedData);
   }, [providedData]);
 
   const smoothingStrategy = useSharedValue(data.smoothingStrategy);
@@ -304,23 +298,7 @@ export default function ChartPathProvider({
       valuesStore.current.curroriginalData = parsedoriginalData;
       curroriginalData.value = parsedoriginalData;
       currSmoothing.value = data.smoothingFactor || 0;
-      isAnimationInProgress.value = true;
-      setTimeout(
-        () => {
-          isAnimationInProgress.value = false;
-          if (dataQueue.value.length !== 0) {
-            setData(dataQueue.value[0]);
-            dataQueue.value.shift();
-          }
-        },
-        timingAnimationConfig.duration === undefined
-          ? timingAnimationDefaultConfig.duration
-          : timingAnimationConfig.duration
-      );
-      progress.value = withTiming(
-        1,
-        combineConfigs(timingAnimationDefaultConfig, timingAnimationConfig)
-      );
+      progress.value = 1;
     } else {
       prevSmoothing.value = data.smoothing || 0;
       currSmoothing.value = data.smoothing || 0;
@@ -707,7 +685,7 @@ function ChartPath({
 
   const progressGradientAnimatedProps = useAnimatedProps(() => {
     return {
-      offset: withTiming("1", timingAnimationDefaultConfig),
+      offset: "1",
     }
   }, [progress.value]);
 
