@@ -182,7 +182,7 @@ function getValue(data, i, smoothingStrategy) {
   return data.value[i];
 }
 
-function calculateRectY(x, d, ss, layoutSize) {
+function calculateRectYAndUpdateProperty(x, d, ss, layoutSize, xLabelProperty) {
   'worklet'
   let idx = 0;
   if (!d?.value?.length) {
@@ -199,6 +199,12 @@ function calculateRectY(x, d, ss, layoutSize) {
       idx = d.value.length - 1;
     }
   }
+
+  if (xLabelProperty) {
+    const nearestPoint = findNearestPoint(x / layoutSize.value.width, d);
+    xLabelProperty.value = nearestPoint.originalX;
+  }
+
   const y = (getValue(d, idx - 1, ss).y +
           (getValue(d, idx, ss).y -
             getValue(d, idx - 1, ss).y) *
@@ -241,6 +247,8 @@ export default function ChartPathProvider({
     pathOpacity,
     positionX,
     positionY,
+    rect1XLabel,
+    rect3XLabel,
     prevSmoothing,
     progress,
     layoutSize,
@@ -487,6 +495,8 @@ export default function ChartPathProvider({
         dotStyle,
         extremes,
         layoutSize,
+        rect1XLabel,
+        rect3XLabel,
         onLongPressGestureEvent,
         originalX,
         originalY,
@@ -504,6 +514,7 @@ export default function ChartPathProvider({
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedRect = Animated.createAnimatedComponent(Rect);
+const AnimatedStop = Animated.createAnimatedComponent(Stop);
 
 function ChartPath({
   smoothingWhileTransitioningEnabled,
@@ -518,6 +529,8 @@ function ChartPath({
   onLongPressGestureEvent,
   prevData,
   currData,
+  rect1XLabel,
+  rect3XLabel,
   smoothingStrategy,
   prevSmoothing,
   currSmoothing,
@@ -673,30 +686,37 @@ function ChartPath({
   }, []);
 
   const rect1AnimatedProps = useAnimatedProps(() => {
-    return calculateRectY(width * 0.0948, currData, smoothingStrategy, layoutSize);
+    return calculateRectYAndUpdateProperty(width * 0.0948, currData, smoothingStrategy, layoutSize, rect1XLabel);
   }, [currData]);
 
   const rect2AnimatedProps = useAnimatedProps(() => {
-    return calculateRectY(width * 0.2974, currData, smoothingStrategy, layoutSize);
+    return calculateRectYAndUpdateProperty(width * 0.2974, currData, smoothingStrategy, layoutSize);
   }, [currData]);
 
   const rect3AnimatedProps = useAnimatedProps(() => {
-    return calculateRectY(width * 0.5, currData, smoothingStrategy, layoutSize);
+    return calculateRectYAndUpdateProperty(width * 0.5, currData, smoothingStrategy, layoutSize, rect3XLabel);
   }, [currData]);
 
   const rect4AnimatedProps = useAnimatedProps(() => {
-    return calculateRectY(width * 0.7025, currData, smoothingStrategy, layoutSize);
+    return calculateRectYAndUpdateProperty(width * 0.7025, currData, smoothingStrategy, layoutSize);
   }, [currData]);
 
   const rect5AnimatedProps = useAnimatedProps(() => {
-    return calculateRectY(width * 0.9051, currData, smoothingStrategy, layoutSize);
+    return calculateRectYAndUpdateProperty(width * 0.9051, currData, smoothingStrategy, layoutSize);
   }, [currData]);
+
+  const progressGradientAnimatedProps = useAnimatedProps(() => {
+    return {
+      offset: withTiming("1", timingAnimationDefaultConfig),
+    }
+  }, [progress.value]);
 
   return (
     <InternalContext.Provider
       value={{
         animatedProps,
         gradientAnimatedProps,
+        progressGradientAnimatedProps,
         rect1AnimatedProps,
         rect2AnimatedProps,
         rect3AnimatedProps,
@@ -725,6 +745,7 @@ export function SvgComponent() {
     width,
     animatedProps,
     gradientAnimatedProps,
+    progressGradientAnimatedProps,
     rect1AnimatedProps,
     rect2AnimatedProps,
     rect3AnimatedProps,
@@ -760,6 +781,12 @@ export function SvgComponent() {
              animatedProps={gradientAnimatedProps}
              fill="url(#prefix__paint0_linear)"
           />
+          <AnimatedPath
+            animatedProps={animatedProps}
+            {...props}
+            style={[style, animatedStyle]}
+            fill="none"
+          />
            {
              props.gradientEnabled &&
              <Defs>
@@ -783,12 +810,6 @@ export function SvgComponent() {
                </LinearGradient>
              </Defs>
            }
-
-          <AnimatedPath
-            animatedProps={animatedProps}
-            {...props}
-            style={[style, animatedStyle]}
-          />
         </Svg>
       </Animated.View>
     </LongPressGestureHandler>
