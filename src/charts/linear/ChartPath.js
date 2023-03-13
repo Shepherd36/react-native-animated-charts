@@ -315,7 +315,7 @@ export default function ChartPathProvider({
   useAnimatedReaction(() => {
     return originalX.value;
   }, (current, prev) => {
-    if (current !== prev) {
+    if (current && current !== prev) {
       hapticsEnabledValue.value && selection();
     }
   }, []);
