@@ -41,14 +41,14 @@ function impactHeavy() {
   'worklet';
   (runOnJS
     ? runOnJS(hapticImpactHeavy)
-    : hapticImpactHeavy)('impactHeavy');
+    : hapticImpactHeavy)();
 }
 
 function selection() {
   'worklet';
   (runOnJS
     ? runOnJS(hapticSelection)
-    : hapticSelection)('selection');
+    : hapticSelection)();
 }
 
 export const InternalContext = createContext(null);
