@@ -34,18 +34,21 @@ import ChartContext, {
 import { findYExtremes } from '../../helpers/extremesHelpers';
 import { svgBezierPath } from '../../smoothing/smoothSVG';
 
+const hapticImpactHeavy = () => ReactNativeHapticFeedback.trigger('impactHeavy');
+const hapticSelection = () => ReactNativeHapticFeedback.trigger('impactHeavy');
+
 function impactHeavy() {
   'worklet';
   (runOnJS
-    ? runOnJS(ReactNativeHapticFeedback.trigger)
-    : ReactNativeHapticFeedback.trigger)('impactHeavy');
+    ? runOnJS(hapticImpactHeavy)
+    : hapticImpactHeavy)('impactHeavy');
 }
 
 function selection() {
   'worklet';
   (runOnJS
-    ? runOnJS(ReactNativeHapticFeedback.trigger)
-    : ReactNativeHapticFeedback.trigger)('selection');
+    ? runOnJS(hapticSelection)
+    : hapticSelection)('selection');
 }
 
 export const InternalContext = createContext(null);
@@ -200,10 +203,10 @@ function calculateRectYAndUpdateProperty(x, d, ss, layoutSize, xLabelProperty) {
     }
   }
 
-  if (xLabelProperty) {
-    const nearestPoint = findNearestPoint(x / layoutSize.value.width, d);
-    xLabelProperty.value = nearestPoint.originalX;
-  }
+  // if (xLabelProperty) {
+  //   const nearestPoint = findNearestPoint(x / layoutSize.value.width, d);
+  //   xLabelProperty.value = nearestPoint.originalX;
+  // }
 
   const y = (getValue(d, idx - 1, ss).y +
           (getValue(d, idx, ss).y -
