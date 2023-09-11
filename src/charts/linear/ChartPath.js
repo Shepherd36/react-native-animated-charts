@@ -203,10 +203,10 @@ function calculateRectYAndUpdateProperty(x, d, ss, layoutSize, xLabelProperty) {
     }
   }
 
-  // if (xLabelProperty) {
-  //   const nearestPoint = findNearestPoint(x / layoutSize.value.width, d);
-  //   xLabelProperty.value = nearestPoint.originalX;
-  // }
+  if (xLabelProperty) {
+     const nearestPoint = findNearestPoint(x / layoutSize.value.width, d);
+     xLabelProperty.value = nearestPoint.originalX;
+  }
 
   const y = (getValue(d, idx - 1, ss).y +
           (getValue(d, idx, ss).y -
