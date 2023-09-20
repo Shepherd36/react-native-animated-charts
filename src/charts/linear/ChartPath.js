@@ -35,7 +35,7 @@ import { findYExtremes } from '../../helpers/extremesHelpers';
 import { svgBezierPath } from '../../smoothing/smoothSVG';
 
 const hapticImpactHeavy = () => ReactNativeHapticFeedback.trigger('impactHeavy');
-const hapticSelection = () => ReactNativeHapticFeedback.trigger('impactHeavy');
+const hapticSelection = () => ReactNativeHapticFeedback.trigger('selection');
 
 function impactHeavy() {
   'worklet';
