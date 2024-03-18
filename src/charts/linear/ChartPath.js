@@ -634,6 +634,9 @@ function ChartPath({
   });
 
   const animatedProps = useAnimatedStyle(() => {
+    if (__disableRendering) {
+      return { d: '' };
+    }
     const props = {
       d: path.value,
       strokeWidth:
@@ -648,7 +651,7 @@ function ChartPath({
       };
     }
     return props;
-  }, []);
+  }, [__disableRendering]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -657,6 +660,9 @@ function ChartPath({
   }, undefined);
 
   const gradientAnimatedProps = useAnimatedStyle(() => {
+    if (__disableRendering) {
+      return { d: '' };
+    }
     const pathValue = path.value.replace('M', 'L');
     const gradientD = pathValue.length > 0 ? `M 0,${height} C 0,0 0,0 0,0 ${pathValue} L ${width},${height}` : '';
     const props = {
@@ -664,7 +670,7 @@ function ChartPath({
 
     };
     return props;
-  }, []);
+  }, [__disableRendering]);
 
   const rect1AnimatedProps = useAnimatedProps(() => {
     return calculateRectYAndUpdateProperty(width * 0.0948, currData, smoothingStrategy, layoutSize, rect1XLabel);
